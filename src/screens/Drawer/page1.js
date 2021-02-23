@@ -5,10 +5,12 @@ import {AlphabetList} from 'react-native-section-alphabet-list';
 import {useSelector} from 'react-redux';
 import HomeTopTab from '../../components/Header/header';
 import {icons} from '../../helper/iconConstant';
+import SearchBar from 'react-native-search-bar';
 
 const pageOne = ({navigation}) => {
   const {userData} = useSelector((state) => state.data);
   const [dataArray, setDataArray] = useState([]);
+  const [filterDataArray, setFilterDataArray] = useState([]);
 
   useEffect(() => {
     const data = [];
@@ -21,6 +23,7 @@ const pageOne = ({navigation}) => {
       data.push(obj);
     });
     setDataArray(data);
+    setFilterDataArray(data);
   }, [userData]);
 
   return (
@@ -33,8 +36,21 @@ const pageOne = ({navigation}) => {
           }}
           title="Page One"
         />
+        <SearchBar
+          placeholder="Search"
+          onChangeText={(searchText) =>
+            setFilterDataArray(
+              dataArray.filter((str) => {
+                return str.body
+                  .toUpperCase()
+                  .includes(searchText.toUpperCase());
+              }),
+            )
+          }
+          onCancelButtonPress={() => setFilterDataArray(dataArray)}
+        />
         <AlphabetList
-          data={dataArray}
+          data={filterDataArray}
           indexLetterColor={'black'}
           showsVerticalScrollIndicator={false}
           renderCustomItem={(item) => (
